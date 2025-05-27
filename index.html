@@ -21,8 +21,8 @@
     --danger-hover: #c82333;
     --primary: #3f80c5;
     --primary-hover: #46709c;
-    --gradient-start: #949494;
-    --gradient-end: #454545;
+    --gradient-start: #599eaf;
+    --gradient-end: #207cbd;
     --select-hover: #3e5791;
     --select-hover-bg: rgba(118, 75, 162, 0.1);
     /* example-color: カラーピッカーで選択する前の初期色やサンプル色 */
@@ -602,12 +602,6 @@
             button.classList.remove('copied');
         }, 1500);
     }
-        // エラーの理由: 
-        // colorHistoryContainerがnullの場合、updateHistoryDisplay()でエラーが発生します。
-        // これは、HTML内にid="colorHistory"の要素が存在しない場合や、スクリプトの実行タイミングが早すぎる場合に起こります。
-        // しかし、今回のコードではid="colorHistory"は存在しており、スクリプトもbodyの最後にあるため通常は問題ありません。
-        // もしエラーが出る場合は、HTML構造やid名のスペルミス、またはキャッシュの影響などが考えられます。
-        // それ以外でエラーが出る場合は、consoleのエラーメッセージを確認してください。
         function addToHistory(color) {
             // 既に履歴にある色は除去
             colorHistory = colorHistory.filter(c => c !== color);
