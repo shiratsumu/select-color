@@ -356,6 +356,13 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 20px;
+                margin-top: 20px;
+
+                /*スクロールできないようにする */
+                overflow: hidden;
+            }
             .container {
                 padding: 30px 20px;
             }
@@ -363,20 +370,37 @@
             h1 {
                 font-size: 2em;
             }
+
+            p {
+                font-size: 0.9em;
+            }
             
             .color-picker {
                 width: 120px;
                 height: 120px;
             }
+            .color-preview {
+                width: 20px;
+                height: 5px;
+                margin: 0 auto;
+                box-shadow: none;
+            }
             
             .color-code-item {
-                flex-direction: column;
+                padding: 8px 10px;
                 gap: 8px;
                 align-items: stretch;
             }
             
             .color-code-label {
                 text-align: center;
+            }
+
+            .history-section {
+                padding-top: 15px;
+            }
+            .history-title {
+                font-size: 0.9em;
             }
         }
     </style>
