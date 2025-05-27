@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>select color</title>
+    <style>
+        :root {
+    /* サイト全体の色 */
+    --main: #657e98;
+    --main-hover: #6a737d7c;
+    --accent: #764ba2;
+    --bg: #fff;
+    --bg-light: #f8f9fa;
+    --bg-hover: #e9ecef;
+    --border: #e9ecef;
+    --heading: #333;
+    --label: #495057;
+    --success: #509e61;
+    --danger: #da636f;
+    --danger-hover: #c82333;
+    --primary: #3f80c5;
+    --primary-hover: #46709c;
+    --gradient-start: #949494;
+    --gradient-end: #454545;
+    --select-hover: #3e5791;
+    --select-hover-bg: rgba(118, 75, 162, 0.1);
+    /* example-color: カラーピッカーで選択する前の初期色やサンプル色 */
+    --example-color-1: #AEC1D5;
+    --example-color-2: #764ba2;
+    --example-color-3: #28a745;
+}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--bg);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--heading);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        #selectButton {
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.2s ease-out, color 0.2s ease-out;
+            padding: 0 5px;
+            border-radius: 5px;
+        }
+
+        #selectButton:hover {
+            transform: scale(1.1);
+            color: var(--select-hover);
+            background-color: var(--select-hover-bg);
+        }
+
+        /* Selectボタンの軽い左右揺れアニメーション */
+        @keyframes select-wiggle {
+            0% { transform: translateY(0); }
+            40% { transform: translateY(-4px); }
+            80% { transform: translateY(2px); }
+            100% { transform: translateY(0); }
+        }
+
+        #selectButton.wiggle {
+            animation: select-wiggle 0.5s ease-in-out;
+        }
+
+        .color-picker-section {
+            margin-bottom: 30px;
+        }
+
+        .color-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .color-picker {
+            width: 150px;
+            height: 150px;
+            padding: 0;
+            margin-top: 20px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+        }
+
+        .color-picker:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .color-picker::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+        .color-picker::-moz-color-swatch {
+            border: none;
+            border-radius: 50%;
+        }
+
+        .color-display {
+            margin: 20px 0;
+        }
+
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .color-preview:hover {
+            transform: scale(1.1);
+        }
+
+        .color-codes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .color-code-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-light);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-code-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--main);
+        }
+
+        .color-code-label {
+            font-weight: 600;
+            color: var(--label);
+            min-width: 60px;
+            text-align: left;
+        }
+
+        .color-code-value {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--heading);
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
+        }
+
+        .copy-btn {
+            background: var(--main);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .copy-btn:hover {
+            background: var(--main-hover);
+            transform: translateY(-2px);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        .history-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .history-title {
+            font-size: 1.2em;
+            color: var(--label);
+            margin-bottom: 15px;
+        }
+
+        .history-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .history-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-color:hover {
+            transform: scale(1.2);
+        }
+
+        .history-color::after {
+            content: attr(data-color);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .history-color:hover::after {
+            opacity: 1;
+            bottom: -35px;
+        }
+
+        .clear-history {
+            margin-top: 15px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-history:hover {
+            background: var(--danger-hover);
+        }
+
+        .save-history-btn {
+            margin-top: 15px;
+            margin-left: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .save-history-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* モーダルスタイル */
+        .modal {
+            display: none; /* 初期状態は非表示 */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6); /* 背景を少し濃く */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 85%; /* 幅を少し広げる */
+            height: 85%; /* 高さを少し広げる */
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex; /* iframeを中央揃えにするためにflexを使用 */
+            flex-direction: column; /* 閉じるボタンとiframeを縦に並べる */
+        }
+
+        .close-button {
+            color: #aaa;
+            align-self: flex-end; /* 右上に配置 */
+            font-size: 35px;
+            font-weight: bold;
+            line-height: 1; /* ボタンのクリック範囲を調整 */
+            padding: 0 10px; /* クリックしやすくする */
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #spreadsheetFrame {
+            width: 100%;
+            height: 100%; /* 親要素の高さに追従 */
+            border: none; /* iframeの境界線を消す */
+            flex-grow: 1; /* 残りのスペースを埋める */
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .color-picker {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .color-code-item {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+            }
+            
+            .color-code-label {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span id="selectButton">Select</span> Color</h1>
+
+        <p>色を決めたらタイトルを押してみましょう。</p>
+        <p>書き込むボタンでスプレッドシートが開きます。</p>
+        
+        <div class="color-picker-section">
+            <div class="color-input-wrapper">
+                <input type="color" id="colorPicker" class="color-picker" value="#667eea">
+            </div>
+            <div class="color-codes">
+                <div class="color-code-item">
+                    <span class="color-code-label">HEX</span>
+                    <span id="hexValue" class="color-code-value"></span>
+                    <button class="copy-btn" onclick="copyToClipboard('hex', event)">コピー</button>
+                </div>
+                <div class="color-code-item">
+                    <span class="color-code-label">RGB</span>
+                    <span id="rgbValue" class="color-code-value">rgb(102, 126, 234)</span>
+                    <button class="copy-btn" onclick="copyToClipboard('rgb', event)">コピー</button>
+                </div>
+                <div class="color-code-item">
+                    <span class="color-code-label">HSL</span>
+                    <span id="hslValue" class="color-code-value">hsl(231, 76%, 66%)</span>
+                    <button class="copy-btn" onclick="copyToClipboard('hsl', event)">コピー</button>
+                </div>
+            </div>
+            
+            <div class="color-display">
+                <div id="colorPreview" class="color-preview"></div>
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h3 class="history-title">選択履歴</h3>
+            <div id="colorHistory" class="history-colors"></div>
+            <button class="clear-history" onclick="clearHistory()">履歴をクリア</button>
+            <button id="saveHistoryBtn" class="save-history-btn">書き込む</button>
+        </div>
+    </div>
+
+    <!-- スプレッドシート表示用モーダル -->
+    <div id="spreadsheetModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <iframe id="spreadsheetFrame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        let colorHistory = [];
+        const maxHistorySize = 8;
+        let selectedColorForHistory = '#667eea'; // 現在選択されている色を保持する変数
+
+        const colorPicker = document.getElementById('colorPicker');
+        const colorPreview = document.getElementById('colorPreview');
+        const hexValue = document.getElementById('hexValue');
+        const rgbValue = document.getElementById('rgbValue');
+        const hslValue = document.getElementById('hslValue');
+        const colorHistoryContainer = document.getElementById('colorHistory');
+        const selectButton = document.getElementById('selectButton'); // Selectボタンを取得
+        const saveHistoryBtn = document.getElementById('saveHistoryBtn'); // 書き込むボタンを取得
+        const spreadsheetModal = document.getElementById('spreadsheetModal');
+        const spreadsheetFrame = document.getElementById('spreadsheetFrame');
+        const googleSheetUrl = 'https://docs.google.com/spreadsheets/d/1zoNZrVuFRdljaIaXJOeqIIE9_4RyVn-0dfXbP4d6mD4/edit?rm=minimal#gid=0';
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const exampleColor1 = rootStyles.getPropertyValue('--example-color-1').trim();
+        colorPicker.value = exampleColor1;
+
+
+
+        // 初期化
+        updateColorDisplay(colorPicker.value);
+        selectedColorForHistory = colorPicker.value; // 初期値を設定
+
+        colorPicker.addEventListener('input', function(e) {
+            const color = e.target.value;
+            updateColorDisplay(color);
+            selectedColorForHistory = color;
+            // Selectボタンを軽く揺らす
+            selectButton.classList.add('wiggle');
+            setTimeout(() => {
+                selectButton.classList.remove('wiggle');
+            }, 700); // アニメーション時間と合わせる
+        });
+
+        selectButton.addEventListener('click', function() {
+            if (selectedColorForHistory) {
+                addToHistory(selectedColorForHistory);
+            }
+        });
+
+        // 書き込むボタンのイベントリスナーを変更
+        saveHistoryBtn.addEventListener('click', function() {
+            openModal();
+        });
+
+        function openModal() {
+            spreadsheetFrame.src = googleSheetUrl;
+            spreadsheetModal.style.display = 'block';
+        }
+
+        function closeModal() {
+            spreadsheetModal.style.display = 'none';
+            spreadsheetFrame.src = ''; // iframeのコンテンツをクリアしてリソース解放
+        }
+
+        // モーダル外クリックで閉じる
+        window.addEventListener('click', function(event) {
+            if (event.target == spreadsheetModal) {
+                closeModal();
+            }
+        });
+
+        function updateColorDisplay(hex) {
+            // プレビュー更新
+            colorPreview.style.backgroundColor = hex;
+            
+            // HEX値更新
+            hexValue.textContent = hex.toUpperCase();
+            
+            // RGB値計算・更新
+            const rgb = hexToRgb(hex);
+            rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            
+            // HSL値計算・更新
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+            hslValue.textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function copyToClipboard(type, event) {
+        let textToCopy = '';
+        let button;
+        switch(type) {
+            case 'hex':
+                textToCopy = hexValue.textContent;
+                button = event.target;
+                break;
+            case 'rgb':
+                textToCopy = rgbValue.textContent;
+                button = event.target;
+                break;
+            case 'hsl':
+                textToCopy = hslValue.textContent;
+                button = event.target;
+                break;
+        }
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'コピー済み!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 1500);
+            }).catch(err => {
+                fallbackCopy(textToCopy, button);
+            });
+        } else {
+            fallbackCopy(textToCopy, button);
+        }
+        }
+
+    function fallbackCopy(textToCopy, button) {
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+                    
+        const originalText = button.textContent;
+        button.textContent = 'コピー済み!';
+        button.classList.add('copied');
+                    
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove('copied');
+        }, 1500);
+    }
+        // エラーの理由: 
+        // colorHistoryContainerがnullの場合、updateHistoryDisplay()でエラーが発生します。
+        // これは、HTML内にid="colorHistory"の要素が存在しない場合や、スクリプトの実行タイミングが早すぎる場合に起こります。
+        // しかし、今回のコードではid="colorHistory"は存在しており、スクリプトもbodyの最後にあるため通常は問題ありません。
+        // もしエラーが出る場合は、HTML構造やid名のスペルミス、またはキャッシュの影響などが考えられます。
+        // それ以外でエラーが出る場合は、consoleのエラーメッセージを確認してください。
+        function addToHistory(color) {
+            // 既に履歴にある色は除去
+            colorHistory = colorHistory.filter(c => c !== color);
+            
+            // 新しい色を先頭に追加
+            colorHistory.unshift(color);
+            
+            // 最大サイズを超えた場合は古いものを削除
+            if (colorHistory.length > maxHistorySize) {
+                colorHistory = colorHistory.slice(0, maxHistorySize);
+            }
+            
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            colorHistoryContainer.innerHTML = '';
+            
+            colorHistory.forEach(color => {
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'history-color';
+                colorDiv.style.backgroundColor = color;
+                colorDiv.setAttribute('data-color', color.toUpperCase());
+                colorDiv.addEventListener('click', () => {
+                    colorPicker.value = color;
+                    updateColorDisplay(color);
+                });
+                colorHistoryContainer.appendChild(colorDiv);
+            });
+        }
+
+        function clearHistory() {
+            colorHistory = [];
+            updateHistoryDisplay();
+        }
+    </script>
+</body>
+</html>
