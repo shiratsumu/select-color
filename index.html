@@ -532,7 +532,7 @@
             colorPreview.style.backgroundColor = hex;
             
             // HEX値更新
-            hexValue.textContent = hex.toUpperCase();
+            hexValue.textContent = hex.toLowerCase();
             
             // RGB値計算・更新
             const rgb = hexToRgb(hex);
@@ -587,7 +587,7 @@
         let button;
         switch(type) {
             case 'hex':
-                textToCopy = hexValue.textContent;
+                textToCopy = hexValue.textContent.toLowerCase();
                 button = event.target;
                 break;
             case 'rgb':
